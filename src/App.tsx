@@ -1,12 +1,12 @@
-import CardMedium from "./components/Atom/CardMedium";
 import Background from "./components/Layout/Background";
+import MainBody from "./components/Organism/MainBody";
 import "./styles/App.css";
 
 function App() {
   return (
     <>
       <Background>
-        <CardMedium />
+        <MainBody />
       </Background>
     </>
   );

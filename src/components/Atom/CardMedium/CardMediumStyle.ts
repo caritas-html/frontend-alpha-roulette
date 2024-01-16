@@ -5,5 +5,7 @@ export const CardBigSize = styled.div`
   margin: 0 auto;
   width: 80%;
   height: 80vh;
-  opacity: 0.8;
+  opacity: 0.9;
+  border-radius: 20px;
+  padding: 24px;
 `;
