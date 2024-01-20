@@ -8,5 +8,4 @@ export const InputComponent = styled.input`
   color: var(--color-white);
   border: 1px solid var(--color-white);
   border-radius: 10px;
-  cursor: pointer;
 `;
