@@ -1,55 +1,72 @@
+import { useEffect, useState } from "react";
 import { HeaderPage } from "./HeaderCardInsideStyle";
 
-type Props = {
-  matchmatchStatus: {
-    difficult: string;
-    gameConfig: {
-      rounds: number;
-      total: number;
-      full: number;
-      blank: number;
+interface MatchStatus {
+  difficult: string;
+  gameConfig: {
+    rounds: number;
+    total: number;
+    full: number;
+    blank: number;
+  };
+  players: {
+    player1: {
+      name: string;
+      life: number;
     };
-    players: {
-      player1: {
-        name: string;
-        life: number;
-      };
-      player2: {
-        name: string;
-        life: number;
-      };
+    player2: {
+      name: string;
+      life: number;
     };
   };
-};
+}
 
-export default function HeaderCardInside({ matchStatus }: Props) {
+interface MyComponentProps {
+  apiProp?: MatchStatus;
+}
+
+export default function HeaderCardInside({ apiProp }: MyComponentProps) {
+  const [matchStatus, setMatchStatus] = useState<MatchStatus | undefined>(
+    apiProp
+  );
+
+  useEffect(() => {
+    if (apiProp) {
+      setMatchStatus(apiProp);
+    }
+  }, [apiProp]);
+
   return (
     <>
       <HeaderPage>
-        <div>
-          <h4>Game matchStatus</h4>
-          <p>difficult: {"" && matchStatus.difficult}</p>
-          <p>rounds: {0 && matchStatus.gameConfig.rounds}</p>
-          <p>total: {0 && matchStatus.gameConfig.total}</p>
-          <p>full: {0 && matchStatus.gameConfig.full}</p>
-          <p>blank: {0 && matchStatus.gameConfig.blank}</p>;
-        </div>
-        <div>
-          <div>
-            <h4>Player 1 matchStatus</h4>
+        {matchStatus && (
+          <>
             <div>
-              <p>{"" && matchStatus.players.player1.name}</p>
-              <p>{0 && matchStatus.players.player1.life}</p>
+              <h4>Game matchStatus</h4>
+              <p>difficult: {matchStatus.difficult}</p>
+              <p>rounds: {matchStatus.gameConfig.rounds}</p>
+              <p>total: {matchStatus.gameConfig.total}</p>
+              <p>full: {matchStatus.gameConfig.full}</p>
+              <p>blank: {matchStatus.gameConfig.blank}</p>;
             </div>
-          </div>
-          <div>
-            <h4>Player 2 matchStatus</h4>
             <div>
-              <p>{"" && matchStatus.players.player2.name}</p>
-              <p>{0 && matchStatus.players.player2.life}</p>
+              <div>
+                <h4>Player 1:</h4>
+                <div>
+                  <p>{matchStatus.players.player1.name}</p>
+                  <p>{matchStatus.players.player1.life}</p>
+                </div>
+              </div>
+              <div>
+                <h4>Player 2:</h4>
+                <div>
+                  <p>{matchStatus.players.player2.name}</p>
+                  <p>{matchStatus.players.player2.life}</p>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </HeaderPage>
     </>
   );
