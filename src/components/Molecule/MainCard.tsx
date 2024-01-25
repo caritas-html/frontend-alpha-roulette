@@ -7,13 +7,35 @@ import { CardInsideWrapper } from "./MainCardStyle";
 import HeaderCardInside from "@/components/HeaderCardInside/HeaderCardInside";
 import { InputComponent } from "../Atom/Input/InputStyle";
 import api from "@/utils/axios";
+import { AxiosResponse } from "axios";
+
+type MatchStatus = {
+  status: {
+    difficult: string;
+    gameConfig: {
+      rounds: number;
+      total: number;
+      full: number;
+      blank: number;
+    };
+    players: {
+      player1: {
+        name: string;
+        life: number;
+      };
+      player2: {
+        name: string;
+        life: number;
+      };
+    };
+  };
+};
 
 export default function MainCard() {
   const [screenState, setScreenState] = useState(true);
   const [showGame, setShowGame] = useState(false);
   const [userName, setUserName] = useState("");
-  const [matchStatus, setMatchStatus] = useState({});
-  const [dataPost, setDataPost] = useState({});
+  const [matchStatus, setMatchStatus] = useState<undefined | MatchStatus>(undefined);  
 
   const playGame = async () => {
     const data = {
@@ -24,7 +46,7 @@ export default function MainCard() {
     try {
       const response = await api.post("/", data);
       response.data && setScreenState(false);
-      setMatchStatus(response.data);
+      setMatchStatus(response.data.players);
       return response.data;
     } catch (error) {
       setUserName("");
@@ -34,14 +56,13 @@ export default function MainCard() {
   };
 
   const getShot = async (target: string) => {
-    setDataPost({
+    const data = {
       currentPlayer: userName,
       playerInput: target,
-    });
+    };
 
     try {
-      const response = await api.post("/shot", dataPost);
-      setMatchStatus(response.data);
+      const response = await api.post("/shot", data);
       response && PCShot();
     } catch (error) {
       console.error({ message: error });
@@ -49,16 +70,24 @@ export default function MainCard() {
   };
 
   const PCShot = async () => {
-    setDataPost({
+    const data = {
       currentPlayer: "PC",
       playerInput: "",
-    });
+    };
 
     try {
-      const response = await api.post("/shot", dataPost);
-      setMatchStatus(response.data);
-      console.log({ pcShot: matchStatus });
+      const response = await api.post("/shot", data);
+      await getMatchStatus();
       return response.data;
+    } catch (error) {
+      console.error({ message: error });
+    }
+  };
+
+  const getMatchStatus = async () => {
+    try {
+      const response: AxiosResponse<MatchStatus> = await api.get("/");
+      setMatchStatus(response);
     } catch (error) {
       console.error({ message: error });
     }
@@ -88,7 +117,7 @@ export default function MainCard() {
           </CardInsideWrapper>
         ) : (
           <CardInsideWrapper show={showGame}>
-            <HeaderCardInside />
+            <HeaderCardInside matchStatus={matchStatus} />
             // smallcard
             <ImageMonster />
             <Button text="Shot Enemy" onClick={() => getShot("shot")} />
