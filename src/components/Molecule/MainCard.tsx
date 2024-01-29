@@ -7,6 +7,7 @@ import { CardInsideWrapper } from "./MainCardStyle";
 import HeaderCardInside from "@/components/HeaderCardInside/HeaderCardInside";
 import { InputComponent } from "../Atom/Input/InputStyle";
 import api from "@/utils/axios";
+import GameEndCard from "./GameEndCard/GameEndCard";
 
 type MatchStatus = {
   difficult: string;
@@ -30,6 +31,7 @@ type MatchStatus = {
 
 export default function MainCard() {
   const [screenState, setScreenState] = useState(true);
+  const [gameEnd, setGameEnd] = useState(false);
   const [showGame, setShowGame] = useState(false);
   const [userName, setUserName] = useState("");
   const [matchStatus, setMatchStatus] = useState<MatchStatus>({
@@ -55,6 +57,7 @@ export default function MainCard() {
     try {
       const response = await api.post("/", data);
       response.data && setScreenState(false);
+      getMatchStatus();
     } catch (error) {
       setUserName("");
       console.error("Error fetching posts:", error);
@@ -70,7 +73,12 @@ export default function MainCard() {
 
     try {
       const response = await api.post("/shot", data);
-      response && PCShot();
+      if (response.data.message) {
+        setGameEnd(true);
+      } else if (response.data) {
+        console.log(response.data);
+        PCShot();
+      }
     } catch (error) {
       console.error({ message: error });
     }
@@ -85,6 +93,7 @@ export default function MainCard() {
     try {
       const response = await api.post("/shot", data);
       getMatchStatus();
+      response.data.message && setGameEnd(true);
       return response.data;
     } catch (error) {
       console.error({ message: error });
@@ -124,11 +133,22 @@ export default function MainCard() {
           </CardInsideWrapper>
         ) : (
           <CardInsideWrapper show={showGame}>
-            <HeaderCardInside apiProp={matchStatus} />
-            {/* // smallcard */}
-            <ImageMonster />
-            <Button text="Shot Enemy" onClick={() => getShot("shot")} />
-            <Button text="Shot Yourself" onClick={() => getShot("selfShot")} />
+            {!gameEnd ? (
+              <>
+                <HeaderCardInside apiProp={matchStatus} />
+                {/* // smallcard */}
+                <ImageMonster />
+                <Button text="Shot Enemy" onClick={() => getShot("shot")} />
+                <Button
+                  text="Shot Yourself"
+                  onClick={() => getShot("selfShot")}
+                />
+              </>
+            ) : (
+              <>
+                <GameEndCard />
+              </>
+            )}
           </CardInsideWrapper>
         )}
       </CardMedium>

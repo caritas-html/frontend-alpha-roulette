@@ -1,19 +1,21 @@
 import styled from "styled-components";
 
 export const HeaderPage = styled.header`
-  .header {
-    background-color: var(--color-black);
-    opacity: 0.8;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
+  background-color: var(--color-black);
+  opacity: 0.8;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+`;
 
-  .header h2 {
-    margin-bottom: 10px;
-  }
+export const Scoreboard = styled.div`
+  font-family: var(--font-mono-syne);
+  color: var(--color-white);
+  display: flex;
+  justify-content: space-evenly;
 
-  .header p {
-    margin: 0;
+  p {
+    white-space: nowrap;
   }
 `;
